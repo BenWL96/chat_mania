@@ -1,0 +1,38 @@
+.chat_body{
+    width: 250px;
+    height: 250px;
+    overflow: scroll;
+    background-color: lightgrey;
+}
+
+
+.message_row_first_person_wrapper{
+    background-color: lightseagreen;
+}
+
+.message_row_third_person_wrapper{
+    background-color: lightcoral;
+}
+
+.chat_footer{
+    width: 250px;
+}
+
+.chat_footer_input{
+    width: 200px;
+}
+
+.chat_footer_send_button{
+    width: 50px;
+}
+
+/* text input */
+
+.chat_body_row_col_time{
+    font-size: 10px;
+    text-align: center;
+}
+
+.chat_body_row_col_msg{
+    text-align: center;
+}

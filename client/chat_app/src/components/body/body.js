@@ -17,8 +17,8 @@ function Body() {
     const [error_messages, setError_Messages] = useState([]);
     const [display_room_clicked_user_input, setDisplay_Room_Clicked_User_Input] = useState(false);
     const [hide_rooms_and_join_chat, setHide_Rooms_And_Join_Chat] = useState(false);
-    //const [prev_msges, setPrev_Msges] = useState([]);
-  
+    const [prev_messages, setPrev_Messages] = useState([]);
+
     const leaveRoom = async () => {
 
     // User leaves the room, so disconnect and notify other users in room.
@@ -36,6 +36,17 @@ function Body() {
 
   };
 
+  const find_messages_in_room = () => {
+    
+    if (roomJoined){
+      socket.on("previous_messages_in_room", (messages_in_room_list) => {
+
+        setPrev_Messages(messages_in_room_list);
+        
+        });
+    }
+  };
+
   const joinRoom = () => {
 
     
@@ -45,7 +56,8 @@ function Body() {
       console.log("user and room are not null.");
 
       setError_Messages([]);
-        
+      
+      
         
         socket.emit("fetch_user_unique", user);
         socket.on("return_user_unique", (user_unique) => {
@@ -69,6 +81,7 @@ function Body() {
                     console.log("Room is unique.")
                     socket.emit("join_room", roomname_typed_by_user);
                     setRoomJoined(true);
+                    find_messages_in_room();
                     setGreeting_Message(null);
                     setError_Messages([]);
                     setDisplay_Room_Clicked_User_Input(false);
@@ -92,6 +105,7 @@ function Body() {
                       }
                       setDisplay_Room_Clicked_User_Input(false);
                       setRoomJoined(true);
+                      find_messages_in_room();
                       setGreeting_Message(null);
                       setError_Messages([]);
                       nthUserJoinsRoom();
@@ -182,6 +196,11 @@ function Body() {
         setList_Of_Rooms_Active(list_rooms);
       });
 
+      //check if room has been joined, if true
+      //Check if there are messages in the room when room has been joined
+      //Then pass as prop.
+      
+
     },[socket]); 
     
       const EnterRoomByClick = (room_name) => {
@@ -250,7 +269,7 @@ function Body() {
 
       {!roomJoined ?
       
-      <></> : <><button onClick={leaveRoom}>Leave Room</button> <Chat socket={socket} username={user} roomname_typed_by_user={roomname_typed_by_user}/></>
+      <></> : <><button onClick={leaveRoom}>Leave Room</button> <Chat socket={socket} username={user} roomname_typed_by_user={roomname_typed_by_user} prev_messages={prev_messages}/></>
       }   
 
             
