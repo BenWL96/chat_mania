@@ -1,11 +1,12 @@
 import React, {useEffect, useState} from 'react';
 import "./chat.css";
 
-function Chat({socket, username, roomname_typed_by_user, prev_messages}) {
+function Chat({socket, username, roomname_typed_by_user}) {
      {/*previous_message_list*/}
 
     const [current_message, setCurrent_Message] = useState(null);
     const [messages, setMessages] = useState([]);
+    const [prev_messages, setPrev_Messages] = useState([]);
 
     const Send_Message = async () => {
         if (current_message !== "" && roomname_typed_by_user){
@@ -27,8 +28,6 @@ function Chat({socket, username, roomname_typed_by_user, prev_messages}) {
 
     useEffect(() => {
 
-        console.log("previous messages:");
-        console.log(prev_messages);
 
         //If user has sent a message or received a message
         //Then don't append all chatroom messages
@@ -37,22 +36,24 @@ function Chat({socket, username, roomname_typed_by_user, prev_messages}) {
                 setMessages((list) => [...list, user_left_room]);
             });
         } else {
-            //User has just joined the chatroom, so pass
-            //Then all the messages that exists.
-            //setMessages((list) => [...list, previous_message_list]);
-            
-            socket.off('previous_messages_in_room').on("previous_messages_in_room", (messages_in_room_list) => {
-                messages_in_room_list.map((message_in_room) => {
-                    setMessages((list) => [...list, message_in_room]);
-                });
-            });
-
-
         }
+
+        socket.off("previous_messages_in_room").on("previous_messages_in_room", (messages_in_room_list) => {
+
+            if (messages.length >= 0){
+            console.log("MESSAGES HAVE BEEN RECEIVED BY ROOM");
+            console.log(messages_in_room_list);
+            messages_in_room_list.map((msg) => {
+                setMessages((list) => [...list, msg]);
+            });
+            } else {
+
+            }
+        })
 
         
 
-          },[socket, prev_messages]);
+          },[socket]);
  
         
     

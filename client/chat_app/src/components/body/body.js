@@ -17,7 +17,6 @@ function Body() {
     const [error_messages, setError_Messages] = useState([]);
     const [display_room_clicked_user_input, setDisplay_Room_Clicked_User_Input] = useState(false);
     const [hide_rooms_and_join_chat, setHide_Rooms_And_Join_Chat] = useState(false);
-    const [prev_messages, setPrev_Messages] = useState([]);
 
     const leaveRoom = async () => {
 
@@ -192,13 +191,7 @@ function Body() {
       //PLACE THIS LOGIC ELSEWHERE AND MAKE SURE IT EXECUTES AFTER
                       //SETROOMJOINED. 
                       //THIS ASYNC ALSO NEEDS TO BE SERVER SIDE
-                      
-      socket.on("previous_messages_in_room", (messages_in_room_list) => {
-        console.log("MESSAGES HAVE BEEN RECEIVED BY ROOM");
-        console.log(messages_in_room_list);
-        console.log(messages_in_room_list);
-        setPrev_Messages(messages_in_room_list);
-      })
+                    
 
     },[socket]); 
     
@@ -268,7 +261,7 @@ function Body() {
 
       {!roomJoined ?
       
-      <></> : <><button onClick={leaveRoom}>Leave Room</button> <Chat socket={socket} username={user} roomname_typed_by_user={roomname_typed_by_user} prev_messages={prev_messages}/></>
+      <></> : <><button onClick={leaveRoom}>Leave Room</button> <Chat socket={socket} username={user} roomname_typed_by_user={roomname_typed_by_user}/></>
       }   
 
             
