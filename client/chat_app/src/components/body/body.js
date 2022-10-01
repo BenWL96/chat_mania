@@ -36,16 +36,6 @@ function Body() {
 
   };
 
-  const find_messages_in_room = () => {
-    
-    if (roomJoined){
-      socket.on("previous_messages_in_room", (messages_in_room_list) => {
-
-        setPrev_Messages(messages_in_room_list);
-        
-        });
-    }
-  };
 
   const joinRoom = () => {
 
@@ -81,11 +71,10 @@ function Body() {
                     console.log("Room is unique.")
                     socket.emit("join_room", roomname_typed_by_user);
                     setRoomJoined(true);
-                    find_messages_in_room();
                     setGreeting_Message(null);
                     setError_Messages([]);
                     setDisplay_Room_Clicked_User_Input(false);
-                    
+
                     // Here We Could Hook Up A Database To Check
                     // Whether Previous Messages Exist In The Room
                   
@@ -105,7 +94,6 @@ function Body() {
                       }
                       setDisplay_Room_Clicked_User_Input(false);
                       setRoomJoined(true);
-                      find_messages_in_room();
                       setGreeting_Message(null);
                       setError_Messages([]);
                       nthUserJoinsRoom();
@@ -199,7 +187,18 @@ function Body() {
       //check if room has been joined, if true
       //Check if there are messages in the room when room has been joined
       //Then pass as prop.
-      
+
+
+      //PLACE THIS LOGIC ELSEWHERE AND MAKE SURE IT EXECUTES AFTER
+                      //SETROOMJOINED. 
+                      //THIS ASYNC ALSO NEEDS TO BE SERVER SIDE
+                      
+      socket.on("previous_messages_in_room", (messages_in_room_list) => {
+        console.log("MESSAGES HAVE BEEN RECEIVED BY ROOM");
+        console.log(messages_in_room_list);
+        console.log(messages_in_room_list);
+        setPrev_Messages(messages_in_room_list);
+      })
 
     },[socket]); 
     

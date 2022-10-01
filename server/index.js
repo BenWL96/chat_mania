@@ -78,27 +78,33 @@ io.on("connection", (socket) =>{
         //if (previous_message_list.length > 0){
         //Pass all previous messages to user that
         //has just joined the chat.
+    
         const send_messages_to_new_user = () => {
             if (message_list.length > 0){
                 
                 console.log("The list of messages on the server is larger than 0.");
 
-                let messages_in_room_list = message_list.filter((item) => {
+                const messages_in_room_list = message_list.filter((item) => {
                     return item.roomname_typed_by_user == roomname_typed_by_user;
                 });
 
                 console.log("The number of messages that belong to room " + roomname_typed_by_user + " is " + messages_in_room_list.length + ".");
                 
-                
-                console.log("message list is being passed to the new room user");
                 if (messages_in_room_list.length > 0){
+                    console.log("message list is being passed to the new room user");
+                    console.log(messages_in_room_list);
+                    console.log(messages_in_room_list);
+                    //Only the user
                     socket.emit("previous_messages_in_room", (messages_in_room_list));
+                    console.log("messages were sent to the user which just joined the room.");
+                    
+                    return;
                 }
             }   
         }
 
         send_messages_to_new_user();
-
+        
 
         
         const message = `user with ID: ${socket.id} joined room ${roomname_typed_by_user}`;
