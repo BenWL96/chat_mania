@@ -36,3 +36,11 @@
 .chat_body_row_col_msg{
     text-align: center;
 }
+
+
+.chat_body_prompt{
+    font-weight: 500;
+    font-size: 20px;
+    text-align: center;
+    margin-top: 100px;
+}

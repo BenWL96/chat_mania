@@ -63,7 +63,11 @@ io.on("connection", (socket) =>{
     }) 
 -
     socket.on("join_room", (roomname_typed_by_user) => {
-        
+        // User Joins
+        // Other Users Notified
+        // Previous Messages In Server Storage Sent To New User
+        //
+
         //We can keep tabs on which
         //rooms ids exist
         if (!list_rooms.includes(roomname_typed_by_user)){
@@ -188,6 +192,13 @@ io.on("connection", (socket) =>{
             list_rooms = list_rooms.filter((item) => {
                 return item !== roomname_typed_by_user;
             });
+
+            //remove all comments which belong to a room.
+            message_list = message_list.filter((item) => {
+                return item.roomname_typed_by_user !== roomname_typed_by_user
+            })
+           
+
             
             console.log("Room has nobody in it, so we must shut it down.")
             console.log(list_rooms);

@@ -6,10 +6,13 @@ function Chat({socket, username, roomname_typed_by_user}) {
 
     const [current_message, setCurrent_Message] = useState(null);
     const [messages, setMessages] = useState([]);
-    const [prev_messages, setPrev_Messages] = useState([]);
+    const [display_empty_room_message_prompt, setDisplay_Empty_Room_Message_Prompt] = useState(true);
 
     const Send_Message = async () => {
         if (current_message !== "" && roomname_typed_by_user){
+
+            setDisplay_Empty_Room_Message_Prompt(false);
+
             const data = {
                 roomname_typed_by_user: roomname_typed_by_user,
                 author: username,
@@ -36,14 +39,16 @@ function Chat({socket, username, roomname_typed_by_user}) {
                 setMessages((list) => [...list, user_left_room]);
             });
         } else {
+            setDisplay_Empty_Room_Message_Prompt(true);
         }
 
         socket.off("previous_messages_in_room").on("previous_messages_in_room", (messages_in_room_list) => {
 
             if (messages.length >= 0){
-            console.log("MESSAGES HAVE BEEN RECEIVED BY ROOM");
-            console.log(messages_in_room_list);
-            messages_in_room_list.map((msg) => {
+                setDisplay_Empty_Room_Message_Prompt(false);
+                console.log("MESSAGES HAVE BEEN RECEIVED BY ROOM");
+                console.log(messages_in_room_list);
+                messages_in_room_list.map((msg) => {
                 setMessages((list) => [...list, msg]);
             });
             } else {
@@ -71,6 +76,9 @@ function Chat({socket, username, roomname_typed_by_user}) {
                 You are currently in room: {roomname_typed_by_user}
             </div>
             <div className='chat_body'>
+
+                {display_empty_room_message_prompt == true ? <><p className='chat_body_prompt'>Be the first to start a conversation... </p></> : <></>}
+
                 {messages.map((messageContent) => {
                     const key = messageContent.author + " " + messageContent.time
 
