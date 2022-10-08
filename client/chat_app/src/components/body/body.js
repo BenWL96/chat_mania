@@ -32,6 +32,46 @@ function Body() {
 
   };
 
+  const ifRoomNameIsUniqueThenListRoom = (roomUnique) =>{
+
+    if (roomUnique === true){
+
+        
+      console.log("Room is unique.")
+      socket.emit("join_room", roomname_typed_by_user);
+      setRoomJoined(true);
+      setGreetingMessage(null);
+      setErrorMessages([]);
+      setDisplayRoomClickedUserInput(false);
+
+      // Here We Could Hook Up A Database To Check
+      // Whether Previous Messages Exist In The Room
+    
+
+    }else {
+      if (displayRoomClickedUserInput == false){
+      const room_not_unique_msg = "Sorry but the room name already exists. Try creating another room";
+      console.log(room_not_unique_msg);
+      if (!errorMessages.includes(room_not_unique_msg)){
+        setErrorMessages((list) => [...list, room_not_unique_msg]);
+        }
+      }else{
+
+        //async carry out function n shit;
+        const nthUserJoinsRoom = async () => {
+          await socket.emit("join_room", roomname_typed_by_user);
+        }
+        setDisplayRoomClickedUserInput(false);
+        setRoomJoined(true);
+        setGreetingMessage(null);
+        setErrorMessages([]);
+        nthUserJoinsRoom();
+
+      }
+      //setError_Message((list) => [...list, room_not_unique_msg])
+    }
+  }
+
 
   const joinRoom = () => {
 
@@ -61,42 +101,7 @@ function Body() {
 
                 socket.on("return_room_unique", (roomUnique) => {
 
-                  if (roomUnique === true){
-
-        
-                    console.log("Room is unique.")
-                    socket.emit("join_room", roomname_typed_by_user);
-                    setRoomJoined(true);
-                    setGreetingMessage(null);
-                    setErrorMessages([]);
-                    setDisplayRoomClickedUserInput(false);
-
-                    // Here We Could Hook Up A Database To Check
-                    // Whether Previous Messages Exist In The Room
-                  
-
-                  }else {
-                    if (displayRoomClickedUserInput == false){
-                    const room_not_unique_msg = "Sorry but the room name already exists. Try creating another room";
-                    console.log(room_not_unique_msg);
-                    if (!errorMessages.includes(room_not_unique_msg)){
-                      setErrorMessages((list) => [...list, room_not_unique_msg]);
-                      }
-                    }else{
-
-                      //async carry out function n shit;
-                      const nthUserJoinsRoom = async () => {
-                        await socket.emit("join_room", roomname_typed_by_user);
-                      }
-                      setDisplayRoomClickedUserInput(false);
-                      setRoomJoined(true);
-                      setGreetingMessage(null);
-                      setErrorMessages([]);
-                      nthUserJoinsRoom();
-
-                    }
-                    //setError_Message((list) => [...list, room_not_unique_msg])
-                  }
+                  ifRoomNameIsUniqueThenListRoom(roomUnique);
           
               }); 
 
