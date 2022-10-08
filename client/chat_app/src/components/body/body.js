@@ -72,6 +72,33 @@ function Body() {
     }
   }
 
+  const userUniqueThenCheckRoomUnqiueElseDisplayError = (user_unique) => {
+    if (user_unique === true){
+
+      //Check that user is unique, if so continue
+
+      console.log("User is unique: " + user_unique + ".");
+
+      socket.emit("fetch_room_unique", ({roomname_typed_by_user: roomname_typed_by_user, user: user}));
+
+      // Now check whether Room entered is unique
+      // If not display error.
+
+        socket.on("return_room_unique", (roomUnique) => {
+
+          ifRoomNameIsUniqueThenListRoom(roomUnique);
+  
+      }); 
+
+
+    }else {
+      const name_not_unique_msg = "Sorry but the name already exists in a chatroom. Try another Name.";
+      console.log(name_not_unique_msg);
+      if (!errorMessages.includes(name_not_unique_msg)){
+        setErrorMessages((list) => [...list, name_not_unique_msg]);
+      }
+    }
+  }
 
   const joinRoom = () => {
 
@@ -88,31 +115,7 @@ function Body() {
         socket.emit("fetch_user_unique", user);
         socket.on("return_user_unique", (user_unique) => {
 
-            if (user_unique === true){
-
-              //Check that user is unique, if so continue
-
-              console.log("User is unique: " + user_unique + ".");
-
-              socket.emit("fetch_room_unique", ({roomname_typed_by_user: roomname_typed_by_user, user: user}));
-
-              // Now check whether Room entered is unique
-              // If not display error.
-
-                socket.on("return_room_unique", (roomUnique) => {
-
-                  ifRoomNameIsUniqueThenListRoom(roomUnique);
-          
-              }); 
-
-
-            }else {
-              const name_not_unique_msg = "Sorry but the name already exists in a chatroom. Try another Name.";
-              console.log(name_not_unique_msg);
-              if (!errorMessages.includes(name_not_unique_msg)){
-                setErrorMessages((list) => [...list, name_not_unique_msg]);
-              }
-            }
+            userUniqueThenCheckRoomUnqiueElseDisplayError(user_unique);
         }); 
 
     } else {
