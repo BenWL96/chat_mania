@@ -4,19 +4,19 @@ import "./chat.css";
 function Chat({socket, username, roomname_typed_by_user}) {
      {/*previous_message_list*/}
 
-    const [current_message, setCurrent_Message] = useState(null);
+    const [currentMessage, setCurrentMessage] = useState(null);
     const [messages, setMessages] = useState([]);
     const [displayEmptyRoomMessagePrompt, setDisplayEmptyRoomMessagePrompt] = useState(true);
 
     const Send_Message = async () => {
-        if (current_message !== "" && roomname_typed_by_user && current_message !== null){
+        if (currentMessage !== "" && roomname_typed_by_user && currentMessage !== null){
 
             setDisplayEmptyRoomMessagePrompt(false);
 
             const data = {
                 roomname_typed_by_user: roomname_typed_by_user,
                 author: username,
-                message: current_message,
+                message: currentMessage,
                 time: new Date().toLocaleString()
             }
             
@@ -31,7 +31,8 @@ function Chat({socket, username, roomname_typed_by_user}) {
 
     useEffect(() => {
 
-
+        //We could have similar code which notifies when a user has joined the room.
+        
         socket.off('receive_message').on("receive_message", (user_left_room) => {
             setDisplayEmptyRoomMessagePrompt(false);
             setMessages((list) => [...list, user_left_room]);
@@ -146,7 +147,7 @@ function Chat({socket, username, roomname_typed_by_user}) {
                 })}
             </div>
             <div className='chat_footer'>
-                <input type="text" className="chat_footer_input" placeholder='type your message' onChange={(entry) => setCurrent_Message(entry.target.value)}/>
+                <input type="text" className="chat_footer_input" placeholder='type your message' onChange={(entry) => setCurrentMessage(entry.target.value)}/>
                 <button onClick={Send_Message} className="chat_footer_send_button">Send</button>
             </div>
 

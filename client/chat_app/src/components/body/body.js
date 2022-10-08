@@ -13,25 +13,22 @@ function Body() {
     const [roomname_typed_by_user, setRoomName_Typed_By_User] = useState(null);
     const [roomJoined, setRoomJoined] = useState(false);
     const [list_of_rooms_active, setList_Of_Rooms_Active] = useState([]);
-    const [greeting_message, setGreeting_Message] = useState(null);
-    const [error_messages, setError_Messages] = useState([]);
-    const [display_room_clicked_user_input, setDisplay_Room_Clicked_User_Input] = useState(false);
-    const [hide_rooms_and_join_chat, setHide_Rooms_And_Join_Chat] = useState(false);
+    const [greetingMessage, setGreetingMessage] = useState(null);
+    const [errorMessages, setErrorMessages] = useState([]);
+    const [displayRoomClickedUserInput, setDisplayRoomClickedUserInput] = useState(false);
+    const [hideRoomsAndJoinChat, setHideRoomsAndJoinChat] = useState(false);
 
     const leaveRoom = async () => {
 
     // User leaves the room, so disconnect and notify other users in room.
 
     console.log("user click leave");
-    setHide_Rooms_And_Join_Chat(false);
+    setHideRoomsAndJoinChat(false);
     setRoomJoined(false);
     setRoomName_Typed_By_User(null);
-    setDisplay_Room_Clicked_User_Input(false);
+    setDisplayRoomClickedUserInput(false);
 
     await socket.emit("disconnect_from_room", ({roomname_typed_by_user: roomname_typed_by_user, user: user}));
-    
-    //Here we need to update the list of rooms.
-    //list_of_rooms_active
 
   };
 
@@ -44,7 +41,7 @@ function Body() {
       // No errors can exist if we are this far.
       console.log("user and room are not null.");
 
-      setError_Messages([]);
+      setErrorMessages([]);
       
       
         
@@ -70,20 +67,20 @@ function Body() {
                     console.log("Room is unique.")
                     socket.emit("join_room", roomname_typed_by_user);
                     setRoomJoined(true);
-                    setGreeting_Message(null);
-                    setError_Messages([]);
-                    setDisplay_Room_Clicked_User_Input(false);
+                    setGreetingMessage(null);
+                    setErrorMessages([]);
+                    setDisplayRoomClickedUserInput(false);
 
                     // Here We Could Hook Up A Database To Check
                     // Whether Previous Messages Exist In The Room
                   
 
                   }else {
-                    if (display_room_clicked_user_input == false){
+                    if (displayRoomClickedUserInput == false){
                     const room_not_unique_msg = "Sorry but the room name already exists. Try creating another room";
                     console.log(room_not_unique_msg);
-                    if (!error_messages.includes(room_not_unique_msg)){
-                      setError_Messages((list) => [...list, room_not_unique_msg]);
+                    if (!errorMessages.includes(room_not_unique_msg)){
+                      setErrorMessages((list) => [...list, room_not_unique_msg]);
                       }
                     }else{
 
@@ -91,10 +88,10 @@ function Body() {
                       const nthUserJoinsRoom = async () => {
                         await socket.emit("join_room", roomname_typed_by_user);
                       }
-                      setDisplay_Room_Clicked_User_Input(false);
+                      setDisplayRoomClickedUserInput(false);
                       setRoomJoined(true);
-                      setGreeting_Message(null);
-                      setError_Messages([]);
+                      setGreetingMessage(null);
+                      setErrorMessages([]);
                       nthUserJoinsRoom();
 
                     }
@@ -107,8 +104,8 @@ function Body() {
             }else {
               const name_not_unique_msg = "Sorry but the name already exists in a chatroom. Try another Name.";
               console.log(name_not_unique_msg);
-              if (!error_messages.includes(name_not_unique_msg)){
-                setError_Messages((list) => [...list, name_not_unique_msg]);
+              if (!errorMessages.includes(name_not_unique_msg)){
+                setErrorMessages((list) => [...list, name_not_unique_msg]);
               }
             }
         }); 
@@ -119,7 +116,7 @@ function Body() {
       // Display appropriate message
 
       console.log("Please enter a valid username and room name.");
-      setError_Messages(["Please enter a valid username and room name."])
+      setErrorMessages(["Please enter a valid username and room name."])
 
     }
   }
@@ -151,19 +148,19 @@ function Body() {
         }})
         
         if (roomJoined == false){
-          setHide_Rooms_And_Join_Chat(false);
+          setHideRoomsAndJoinChat(false);
           setRoomName_Typed_By_User(null);
-          setDisplay_Room_Clicked_User_Input(false);
+          setDisplayRoomClickedUserInput(false);
         }} else {
           setList_Of_Rooms_Active([]);
           console.log("There are no rooms, so please create a room");
-          setGreeting_Message("Please create a room!");
-          setHide_Rooms_And_Join_Chat(false);
+          setGreetingMessage("Please create a room!");
+          setHideRoomsAndJoinChat(false);
           //Currently when user leaves room they can't receive messages
           //any more, but they can still post messages due to the state..
           setRoomJoined(false);
           setRoomName_Typed_By_User(null);
-          setDisplay_Room_Clicked_User_Input(false);
+          setDisplayRoomClickedUserInput(false);
         } 
       });
 
@@ -199,17 +196,17 @@ function Body() {
         //User has clicked on a room number
         //Now they should select a unique username on the server to join a room.
         console.log("Room number " + room_name + " was clicked.");
-        setHide_Rooms_And_Join_Chat(true);
-        setError_Messages([]);
+        setHideRoomsAndJoinChat(true);
+        setErrorMessages([]);
         setRoomName_Typed_By_User(room_name);
-        setDisplay_Room_Clicked_User_Input(true);
+        setDisplayRoomClickedUserInput(true);
       }
     
       const UserClicksBack = async () => {
         //Disconnect from room, and shut down room if not existent.
         await socket.emit("disconnect_from_room", ({roomname_typed_by_user : roomname_typed_by_user, user: user}));
-        setDisplay_Room_Clicked_User_Input(false);
-        setHide_Rooms_And_Join_Chat(false);
+        setDisplayRoomClickedUserInput(false);
+        setHideRoomsAndJoinChat(false);
         setRoomName_Typed_By_User(null);
 
       }
@@ -225,32 +222,32 @@ function Body() {
             {/*Code Below Must Be New Component*/}
 
 
-      {!error_messages.length > 0 ? <></> : <> {error_messages.map((error) => {
+      {!errorMessages.length > 0 ? <></> : <> {errorMessages.map((error) => {
         return <div key={error}>{error}</div>
       })} </>}
 
 
 
-      {list_of_rooms_active.length != 0 && roomJoined == false && hide_rooms_and_join_chat == false ? <>Select A Room Below</> : <></>}
+      {list_of_rooms_active.length != 0 && roomJoined == false && hideRoomsAndJoinChat == false ? <>Select A Room Below</> : <></>}
       {/*User hasn't yet joined the room, but they have clicked the room number */}
       {/*We must only show the list of rooms, if all false*/}
-      {list_of_rooms_active.length != 0 && roomJoined == false && hide_rooms_and_join_chat == false ? <> {list_of_rooms_active.map((room_name) => {
+      {list_of_rooms_active.length != 0 && roomJoined == false && hideRoomsAndJoinChat == false ? <> {list_of_rooms_active.map((room_name) => {
         return <div className="clickable_room_name" key={room_name} onClick={() => EnterRoomByClick(room_name)}>{room_name}</div>
       
       })} </> : <></>}
 
       {/*We must only show the greeting message if , if all evaluate to true*/}
-      {list_of_rooms_active.length == 0 && roomJoined == false && hide_rooms_and_join_chat == false ? <>{greeting_message}</> : <></>}
+      {list_of_rooms_active.length == 0 && roomJoined == false && hideRoomsAndJoinChat == false ? <>{greetingMessage}</> : <></>}
 
       {/*only display room input if criteria met.*/}
-      {hide_rooms_and_join_chat == false && !roomJoined ? <><h2>Join A Chat</h2>
+      {hideRoomsAndJoinChat == false && !roomJoined ? <><h2>Join A Chat</h2>
       <input type="text" placeholder="Type A User Name Here" onChange={(entry) => {setUser(entry.target.value)}}/>
       <input type="text" placeholder="Type A Room Name Here" onChange={(entry) => {setRoomName_Typed_By_User(entry.target.value)}}/>
       <button onClick={joinRoom}>Join A Room</button>
       </> : <></>}
 
   
-      {display_room_clicked_user_input ? <>
+      {displayRoomClickedUserInput ? <>
         <h2>Select a name for room {roomname_typed_by_user}</h2>
         
       <input type="text" placeholder="Type A User Name Here" onChange={(entry) => {setUser(entry.target.value)}}/>
