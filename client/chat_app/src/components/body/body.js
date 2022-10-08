@@ -12,7 +12,7 @@ function Body() {
     const [user, setUser] = useState(null);
     const [roomname_typed_by_user, setRoomName_Typed_By_User] = useState(null);
     const [roomJoined, setRoomJoined] = useState(false);
-    const [list_of_rooms_active, setList_Of_Rooms_Active] = useState([]);
+    const [listOfRoomsActive, setListOfRoomsActive] = useState([]);
     const [greetingMessage, setGreetingMessage] = useState(null);
     const [errorMessages, setErrorMessages] = useState([]);
     const [displayRoomClickedUserInput, setDisplayRoomClickedUserInput] = useState(false);
@@ -142,9 +142,9 @@ function Body() {
         //This doesn't work..
         console.log("room(s) exist proceed to mapping");
         listRooms.map((roomname_typed_by_user) => {
-        if (!list_of_rooms_active.includes(roomname_typed_by_user)){
+        if (!listOfRoomsActive.includes(roomname_typed_by_user)){
           console.log("room number: " + roomname_typed_by_user + " was pushed to the state.");
-          setList_Of_Rooms_Active((list) => [...list, roomname_typed_by_user]);
+          setListOfRoomsActive((list) => [...list, roomname_typed_by_user]);
         }})
         
         if (roomJoined == false){
@@ -152,7 +152,7 @@ function Body() {
           setRoomName_Typed_By_User(null);
           setDisplayRoomClickedUserInput(false);
         }} else {
-          setList_Of_Rooms_Active([]);
+          setListOfRoomsActive([]);
           console.log("There are no rooms, so please create a room");
           setGreetingMessage("Please create a room!");
           setHideRoomsAndJoinChat(false);
@@ -167,8 +167,8 @@ function Body() {
       //Check to see if a room has been created, make sure
       //Other users on server can see this
       socket.on("room_created", (roomname_typed_by_user) => {
-        if (!list_of_rooms_active.includes(roomname_typed_by_user)){
-          setList_Of_Rooms_Active((list) => [...list, roomname_typed_by_user]);
+        if (!listOfRoomsActive.includes(roomname_typed_by_user)){
+          setListOfRoomsActive((list) => [...list, roomname_typed_by_user]);
         }
       });
       
@@ -177,7 +177,7 @@ function Body() {
       socket.on("return_reduced_room_list", (listRooms) => {
         console.log("Checking if room list needs to be updated.")
         console.log(listRooms);
-        setList_Of_Rooms_Active(listRooms);
+        setListOfRoomsActive(listRooms);
       });
 
       //check if room has been joined, if true
@@ -228,16 +228,16 @@ function Body() {
 
 
 
-      {list_of_rooms_active.length != 0 && roomJoined == false && hideRoomsAndJoinChat == false ? <>Select A Room Below</> : <></>}
+      {listOfRoomsActive.length != 0 && roomJoined == false && hideRoomsAndJoinChat == false ? <>Select A Room Below</> : <></>}
       {/*User hasn't yet joined the room, but they have clicked the room number */}
       {/*We must only show the list of rooms, if all false*/}
-      {list_of_rooms_active.length != 0 && roomJoined == false && hideRoomsAndJoinChat == false ? <> {list_of_rooms_active.map((room_name) => {
+      {listOfRoomsActive.length != 0 && roomJoined == false && hideRoomsAndJoinChat == false ? <> {listOfRoomsActive.map((room_name) => {
         return <div className="clickable_room_name" key={room_name} onClick={() => EnterRoomByClick(room_name)}>{room_name}</div>
       
       })} </> : <></>}
 
       {/*We must only show the greeting message if , if all evaluate to true*/}
-      {list_of_rooms_active.length == 0 && roomJoined == false && hideRoomsAndJoinChat == false ? <>{greetingMessage}</> : <></>}
+      {listOfRoomsActive.length == 0 && roomJoined == false && hideRoomsAndJoinChat == false ? <>{greetingMessage}</> : <></>}
 
       {/*only display room input if criteria met.*/}
       {hideRoomsAndJoinChat == false && !roomJoined ? <><h2>Join A Chat</h2>
