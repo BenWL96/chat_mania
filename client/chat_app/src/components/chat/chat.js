@@ -9,7 +9,7 @@ function Chat({socket, username, roomname_typed_by_user}) {
     const [display_empty_room_message_prompt, setDisplay_Empty_Room_Message_Prompt] = useState(true);
 
     const Send_Message = async () => {
-        if (current_message !== "" && roomname_typed_by_user){
+        if (current_message !== "" && roomname_typed_by_user && current_message !== null){
 
             setDisplay_Empty_Room_Message_Prompt(false);
 
@@ -32,30 +32,34 @@ function Chat({socket, username, roomname_typed_by_user}) {
     useEffect(() => {
 
 
+        socket.off('receive_message').on("receive_message", (user_left_room) => {
+            setDisplay_Empty_Room_Message_Prompt(false);
+            setMessages((list) => [...list, user_left_room]);
+        });
+
+
         //If user has sent a message or received a message
         //Then don't append all chatroom messages
-        if (messages.length >= 0){
-            socket.off('receive_message').on("receive_message", (user_left_room) => {
-                setMessages((list) => [...list, user_left_room]);
-            });
+
+
+
+        socket.off("previous_messages_in_room").on("previous_messages_in_room", (messages_in_room_list) => {
+            
+            // Second user that joins the room should be passed
+            // The previous messages that First user sent.
+    
+            console.log("MESSAGES HAVE BEEN RECEIVED BY ROOM");
+            console.log(messages_in_room_list);
+            messages_in_room_list.map((msg) => {
+            setMessages((list) => [...list, msg]);
+            })
+        });
+
+        if (messages.length > 0){
+            setDisplay_Empty_Room_Message_Prompt(false);
         } else {
             setDisplay_Empty_Room_Message_Prompt(true);
         }
-
-        socket.off("previous_messages_in_room").on("previous_messages_in_room", (messages_in_room_list) => {
-
-            if (messages.length >= 0){
-                setDisplay_Empty_Room_Message_Prompt(false);
-                console.log("MESSAGES HAVE BEEN RECEIVED BY ROOM");
-                console.log(messages_in_room_list);
-                messages_in_room_list.map((msg) => {
-                setMessages((list) => [...list, msg]);
-            });
-            } else {
-
-            }
-        })
-
         
 
           },[socket]);
