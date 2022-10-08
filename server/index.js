@@ -15,9 +15,9 @@ const io = new Server(server,{
     }
 })
 
-var list_rooms = [];
-var list_users = [];
-var message_list = [];
+var listRooms = [];
+var listUsers = [];
+var messageList = [];
 
 io.on("connection", (socket) =>{
 
@@ -25,7 +25,7 @@ io.on("connection", (socket) =>{
     console.log(socket.id);
 
     socket.on("fetch_user_unique", (user) => {
-        if (!list_users.includes(user)){
+        if (!listUsers.includes(user)){
 
             //Only push if room unique too..
             console.log("user " + user + " is unique");
@@ -38,15 +38,15 @@ io.on("connection", (socket) =>{
     })
 
     socket.on("fetch_room_unique", ({roomname_typed_by_user, user}) => {
-        if (!list_rooms.includes(roomname_typed_by_user)){
+        if (!listRooms.includes(roomname_typed_by_user)){
             console.log("room: " + roomname_typed_by_user + " is unique");
             //Both room and user unique so can make note of this.
-            list_users.push(user);
-            const room_unique = true;
-            socket.emit("return_room_unique", room_unique);
+            listUsers.push(user);
+            const roomUnique = true;
+            socket.emit("return_room_unique", roomUnique);
         } else {
-            const room_unique = false;
-            socket.emit("return_room_unique", room_unique);
+            const roomUnique = false;
+            socket.emit("return_room_unique", roomUnique);
         }
     })
 
@@ -59,7 +59,7 @@ io.on("connection", (socket) =>{
     //So the rooms are passed
     socket.on("fetch_room_list", () => {
         console.log("returning the list of rooms");
-        socket.emit("return_room_list", list_rooms);
+        socket.emit("return_room_list", listRooms);
     }) 
 -
     socket.on("join_room", (roomname_typed_by_user) => {
@@ -70,25 +70,25 @@ io.on("connection", (socket) =>{
 
         //We can keep tabs on which
         //rooms ids exist
-        if (!list_rooms.includes(roomname_typed_by_user)){
-            console.log("Room " + roomname_typed_by_user + " was pushed to list_rooms.")
-            list_rooms.push(roomname_typed_by_user);
+        if (!listRooms.includes(roomname_typed_by_user)){
+            console.log("Room " + roomname_typed_by_user + " was pushed to listRooms.")
+            listRooms.push(roomname_typed_by_user);
             socket.broadcast.emit("room_created", roomname_typed_by_user);
         }
 
         socket.join(roomname_typed_by_user);
         socket.emit();
 
-        //if (previous_message_list.length > 0){
+        //if (previous_messageList.length > 0){
         //Pass all previous messages to user that
         //has just joined the chat.
     
         const send_messages_to_new_user = () => {
-            if (message_list.length > 0){
+            if (messageList.length > 0){
                 
                 console.log("The list of messages on the server is larger than 0.");
 
-                const messages_in_room_list = message_list.filter((item) => {
+                const messages_in_room_list = messageList.filter((item) => {
                     return item.roomname_typed_by_user == roomname_typed_by_user;
                 });
 
@@ -130,8 +130,8 @@ io.on("connection", (socket) =>{
 
     socket.on("send_message", (data) => {
         console.log(data);
-        message_list.push(data);
-        console.log(message_list);
+        messageList.push(data);
+        console.log(messageList);
         console.log("message has been added to array");
         socket.to(data.roomname_typed_by_user).emit("receive_message", data);
     });
@@ -145,7 +145,7 @@ io.on("connection", (socket) =>{
         
         console.log("user: " + user + " is being removed from server list");
 
-        list_users = list_users.filter((item) => {
+        listUsers = listUsers.filter((item) => {
             return item !== user
         });
 
@@ -189,31 +189,31 @@ io.on("connection", (socket) =>{
         } else {
 
             //Do Something
-            list_rooms = list_rooms.filter((item) => {
+            listRooms = listRooms.filter((item) => {
                 return item !== roomname_typed_by_user;
             });
 
             //remove all comments which belong to a room.
-            message_list = message_list.filter((item) => {
+            messageList = messageList.filter((item) => {
                 return item.roomname_typed_by_user !== roomname_typed_by_user
             })
            
 
             
             console.log("Room has nobody in it, so we must shut it down.")
-            console.log(list_rooms);
-            socket.emit("return_reduced_room_list", list_rooms);
-            socket.broadcast.emit("return_reduced_room_list", list_rooms);
+            console.log(listRooms);
+            socket.emit("return_reduced_room_list", listRooms);
+            socket.broadcast.emit("return_reduced_room_list", listRooms);
             
             
         }
 
-        //socket.emit("return_room_list", list_rooms);
+        //socket.emit("return_room_list", listRooms);
 
 
         //When room_list = 0 then greeting displayed
         //This occurs when other user still in room...
-        //socket.broadcast.emit("return_room_list", list_rooms);
+        //socket.broadcast.emit("return_room_list", listRooms);
 
         //const user_that_left = socket.id;
         //const user_left_room = "user " + user_that_left + " has left the room";

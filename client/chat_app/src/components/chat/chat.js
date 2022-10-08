@@ -6,12 +6,12 @@ function Chat({socket, username, roomname_typed_by_user}) {
 
     const [current_message, setCurrent_Message] = useState(null);
     const [messages, setMessages] = useState([]);
-    const [display_empty_room_message_prompt, setDisplay_Empty_Room_Message_Prompt] = useState(true);
+    const [displayEmptyRoomMessagePrompt, setDisplayEmptyRoomMessagePrompt] = useState(true);
 
     const Send_Message = async () => {
         if (current_message !== "" && roomname_typed_by_user && current_message !== null){
 
-            setDisplay_Empty_Room_Message_Prompt(false);
+            setDisplayEmptyRoomMessagePrompt(false);
 
             const data = {
                 roomname_typed_by_user: roomname_typed_by_user,
@@ -33,7 +33,7 @@ function Chat({socket, username, roomname_typed_by_user}) {
 
 
         socket.off('receive_message').on("receive_message", (user_left_room) => {
-            setDisplay_Empty_Room_Message_Prompt(false);
+            setDisplayEmptyRoomMessagePrompt(false);
             setMessages((list) => [...list, user_left_room]);
         });
 
@@ -56,9 +56,9 @@ function Chat({socket, username, roomname_typed_by_user}) {
         });
 
         if (messages.length > 0){
-            setDisplay_Empty_Room_Message_Prompt(false);
+            setDisplayEmptyRoomMessagePrompt(false);
         } else {
-            setDisplay_Empty_Room_Message_Prompt(true);
+            setDisplayEmptyRoomMessagePrompt(true);
         }
         
 
@@ -81,7 +81,7 @@ function Chat({socket, username, roomname_typed_by_user}) {
             </div>
             <div className='chat_body'>
 
-                {display_empty_room_message_prompt == true ? <><p className='chat_body_prompt'>Be the first to start a conversation... </p></> : <></>}
+                {displayEmptyRoomMessagePrompt == true ? <><p className='chat_body_prompt'>Be the first to start a conversation... </p></> : <></>}
 
                 {messages.map((messageContent) => {
                     const key = messageContent.author + " " + messageContent.time

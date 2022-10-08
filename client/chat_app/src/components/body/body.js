@@ -62,9 +62,9 @@ function Body() {
               // Now check whether Room entered is unique
               // If not display error.
 
-                socket.on("return_room_unique", (room_unique) => {
+                socket.on("return_room_unique", (roomUnique) => {
 
-                  if (room_unique === true){
+                  if (roomUnique === true){
 
         
                     console.log("Room is unique.")
@@ -137,14 +137,14 @@ function Body() {
     
     socket.emit("fetch_room_list");
 
-    socket.off('return_room_list').on("return_room_list", (list_rooms) => {
-      console.log("list of rooms:" + list_rooms);
-      console.log("There are " + list_rooms.length + " rooms.")
+    socket.off('return_room_list').on("return_room_list", (listRooms) => {
+      console.log("list of rooms:" + listRooms);
+      console.log("There are " + listRooms.length + " rooms.")
       //Check if rooms exist in state!!
-      if (!list_rooms.length == 0){
+      if (!listRooms.length == 0){
         //This doesn't work..
         console.log("room(s) exist proceed to mapping");
-        list_rooms.map((roomname_typed_by_user) => {
+        listRooms.map((roomname_typed_by_user) => {
         if (!list_of_rooms_active.includes(roomname_typed_by_user)){
           console.log("room number: " + roomname_typed_by_user + " was pushed to the state.");
           setList_Of_Rooms_Active((list) => [...list, roomname_typed_by_user]);
@@ -177,10 +177,10 @@ function Body() {
       
       //Check to make sure that the list of rooms are
       //Updating.
-      socket.on("return_reduced_room_list", (list_rooms) => {
+      socket.on("return_reduced_room_list", (listRooms) => {
         console.log("Checking if room list needs to be updated.")
-        console.log(list_rooms);
-        setList_Of_Rooms_Active(list_rooms);
+        console.log(listRooms);
+        setList_Of_Rooms_Active(listRooms);
       });
 
       //check if room has been joined, if true
