@@ -10,7 +10,7 @@ function Body() {
 
 
     const [user, setUser] = useState(null);
-    const [roomname_typed_by_user, setRoomName_Typed_By_User] = useState(null);
+    const [roomname_typed_by_user, setRoomNameTypedByUser] = useState(null);
     const [roomJoined, setRoomJoined] = useState(false);
     const [listOfRoomsActive, setListOfRoomsActive] = useState([]);
     const [greetingMessage, setGreetingMessage] = useState(null);
@@ -25,7 +25,7 @@ function Body() {
     console.log("user click leave");
     setHideRoomsAndJoinChat(false);
     setRoomJoined(false);
-    setRoomName_Typed_By_User(null);
+    setRoomNameTypedByUser(null);
     setDisplayRoomClickedUserInput(false);
 
     await socket.emit("disconnect_from_room", ({roomname_typed_by_user: roomname_typed_by_user, user: user}));
@@ -129,6 +129,17 @@ function Body() {
     }
   }
 
+  const listOfRoomsIsZeroSoSetStateToReflectThis = () => {
+    setListOfRoomsActive([]);
+    console.log("There are no rooms, so please create a room");
+    setGreetingMessage("Please create a room!");
+    setHideRoomsAndJoinChat(false);
+    //Currently when user leaves room they can't receive messages
+    //any more, but they can still post messages due to the state..
+    setRoomJoined(false);
+    setRoomNameTypedByUser(null);
+    setDisplayRoomClickedUserInput(false);
+  }
 
   useEffect(() => {
 
@@ -157,18 +168,10 @@ function Body() {
         
         if (roomJoined == false){
           setHideRoomsAndJoinChat(false);
-          setRoomName_Typed_By_User(null);
+          setRoomNameTypedByUser(null);
           setDisplayRoomClickedUserInput(false);
         }} else {
-          setListOfRoomsActive([]);
-          console.log("There are no rooms, so please create a room");
-          setGreetingMessage("Please create a room!");
-          setHideRoomsAndJoinChat(false);
-          //Currently when user leaves room they can't receive messages
-          //any more, but they can still post messages due to the state..
-          setRoomJoined(false);
-          setRoomName_Typed_By_User(null);
-          setDisplayRoomClickedUserInput(false);
+          listOfRoomsIsZeroSoSetStateToReflectThis();
         } 
       });
 
@@ -180,23 +183,12 @@ function Body() {
         }
       });
       
-      //Check to make sure that the list of rooms are
-      //Updating.
+      //This checks to make sure that the list of rooms are updating.
       socket.on("return_reduced_room_list", (listRooms) => {
         console.log("Checking if room list needs to be updated.")
         console.log(listRooms);
         setListOfRoomsActive(listRooms);
       });
-
-      //check if room has been joined, if true
-      //Check if there are messages in the room when room has been joined
-      //Then pass as prop.
-
-
-      //PLACE THIS LOGIC ELSEWHERE AND MAKE SURE IT EXECUTES AFTER
-                      //SETROOMJOINED. 
-                      //THIS ASYNC ALSO NEEDS TO BE SERVER SIDE
-                    
 
     },[socket]); 
     
@@ -206,7 +198,7 @@ function Body() {
         console.log("Room number " + room_name + " was clicked.");
         setHideRoomsAndJoinChat(true);
         setErrorMessages([]);
-        setRoomName_Typed_By_User(room_name);
+        setRoomNameTypedByUser(room_name);
         setDisplayRoomClickedUserInput(true);
       }
     
@@ -215,7 +207,7 @@ function Body() {
         await socket.emit("disconnect_from_room", ({roomname_typed_by_user : roomname_typed_by_user, user: user}));
         setDisplayRoomClickedUserInput(false);
         setHideRoomsAndJoinChat(false);
-        setRoomName_Typed_By_User(null);
+        setRoomNameTypedByUser(null);
 
       }
 
@@ -250,7 +242,7 @@ function Body() {
       {/*only display room input if criteria met.*/}
       {hideRoomsAndJoinChat == false && !roomJoined ? <><h2>Join A Chat</h2>
       <input type="text" placeholder="Type A User Name Here" onChange={(entry) => {setUser(entry.target.value)}}/>
-      <input type="text" placeholder="Type A Room Name Here" onChange={(entry) => {setRoomName_Typed_By_User(entry.target.value)}}/>
+      <input type="text" placeholder="Type A Room Name Here" onChange={(entry) => {setRoomNameTypedByUser(entry.target.value)}}/>
       <button onClick={joinRoom}>Join A Room</button>
       </> : <></>}
 
