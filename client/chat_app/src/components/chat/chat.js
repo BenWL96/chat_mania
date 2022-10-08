@@ -32,7 +32,7 @@ function Chat({socket, username, roomname_typed_by_user}) {
     useEffect(() => {
 
         //We could have similar code which notifies when a user has joined the room.
-        
+
         socket.off('receive_message').on("receive_message", (user_left_room) => {
             setDisplayEmptyRoomMessagePrompt(false);
             setMessages((list) => [...list, user_left_room]);
@@ -48,7 +48,13 @@ function Chat({socket, username, roomname_typed_by_user}) {
             
             // Second user that joins the room should be passed
             // The previous messages that First user sent.
-    
+            
+            if (messages.length == 0){
+                if (messages_in_room_list.length > 0) {
+                    setDisplayEmptyRoomMessagePrompt(false);
+                }
+            }
+
             console.log("MESSAGES HAVE BEEN RECEIVED BY ROOM");
             console.log(messages_in_room_list);
             messages_in_room_list.map((msg) => {
