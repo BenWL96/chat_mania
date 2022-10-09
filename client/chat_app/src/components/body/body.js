@@ -56,17 +56,27 @@ function Body() {
 
   }
 
+  const joinRoomEmit = () => {
+    socket.emit("join_room", roomname_typed_by_user);
+  }
+
+  const roomNameUniqueSetState = () => {
+    
+    console.log("Room is unique.")
+    joinRoomEmit();
+    
+    setRoomJoined(true);
+    setGreetingMessage(null);
+    setErrorMessages([]);
+    setDisplayRoomClickedUserInput(false);
+  }
+
   const ifRoomNameIsUniqueThenListRoom = (roomUnique) =>{
 
     if (roomUnique === true){
 
         
-      console.log("Room is unique.")
-      socket.emit("join_room", roomname_typed_by_user);
-      setRoomJoined(true);
-      setGreetingMessage(null);
-      setErrorMessages([]);
-      setDisplayRoomClickedUserInput(false);
+      roomNameUniqueSetState();
 
       // Here We Could Hook Up A Database To Check
       // Whether Previous Messages Exist In The Room
@@ -208,7 +218,7 @@ function Body() {
 
     },[socket]); 
     
-      const EnterRoomByClick = (room_name) => {
+      const EnterRoomByClickSetState = (room_name) => {
         //User has clicked on a room number
         //Now they should select a unique username on the server to join a room.
         console.log("Room number " + room_name + " was clicked.");
@@ -218,8 +228,8 @@ function Body() {
         setDisplayRoomClickedUserInput(true);
       }
     
-      const UserClicksBack = async () => {
-        //Disconnect from room, and shut down room if not existent.
+      const UserClicksBackSetState = async () => {
+
         setDisplayRoomClickedUserInput(false);
         setHideRoomsAndJoinChat(false);
         setRoomNameTypedByUser(null);
@@ -247,7 +257,7 @@ function Body() {
       {/*User hasn't yet joined the room, but they have clicked the room number */}
       {/*We must only show the list of rooms, if all false*/}
       {listOfRoomsActive.length != 0 && roomJoined == false && hideRoomsAndJoinChat == false ? <> {listOfRoomsActive.map((room_name) => {
-        return <div className="clickable_room_name" key={room_name} onClick={() => EnterRoomByClick(room_name)}>{room_name}</div>
+        return <div className="clickable_room_name" key={room_name} onClick={() => EnterRoomByClickSetState(room_name)}>{room_name}</div>
       
       })} </> : <></>}
 
@@ -267,7 +277,7 @@ function Body() {
         
       <input type="text" placeholder="Type A User Name Here" onChange={(entry) => {setUser(entry.target.value)}}/>
       <button onClick={joinRoom}>Join A Room</button>
-      <button onClick={UserClicksBack}>Or Go Back</button>
+      <button onClick={UserClicksBackSetState}>Or Go Back</button>
       </> : <></> }
 
 
