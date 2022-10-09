@@ -32,6 +32,20 @@ function Body() {
 
   };
 
+  const secondUserJoinsRoomSetState = () => {
+
+    const nthUserJoinsRoom = async () => {
+      await socket.emit("join_room", roomname_typed_by_user);
+    }
+    
+    setDisplayRoomClickedUserInput(false);
+    setRoomJoined(true);
+    setGreetingMessage(null);
+    setErrorMessages([]);
+    nthUserJoinsRoom();
+
+  }
+
   const ifRoomNameIsUniqueThenListRoom = (roomUnique) =>{
 
     if (roomUnique === true){
@@ -57,15 +71,7 @@ function Body() {
         }
       }else{
 
-        //async carry out function n shit;
-        const nthUserJoinsRoom = async () => {
-          await socket.emit("join_room", roomname_typed_by_user);
-        }
-        setDisplayRoomClickedUserInput(false);
-        setRoomJoined(true);
-        setGreetingMessage(null);
-        setErrorMessages([]);
-        nthUserJoinsRoom();
+        secondUserJoinsRoomSetState();
 
       }
       //setError_Message((list) => [...list, room_not_unique_msg])
