@@ -41,16 +41,17 @@ function Body() {
     
   };
 
-  const secondUserJoinsRoomSetState = () => {
+  const nthUserJoinsRoom = async () => {
+    await socket.emit("join_room", roomname_typed_by_user);
+  }
 
-    const nthUserJoinsRoom = async () => {
-      await socket.emit("join_room", roomname_typed_by_user);
-    }
+  const secondUserJoinsRoomSetState = () => {
 
     setDisplayRoomClickedUserInput(false);
     setRoomJoined(true);
     setGreetingMessage(null);
     setErrorMessages([]);
+
     nthUserJoinsRoom();
 
   }
@@ -219,7 +220,6 @@ function Body() {
     
       const UserClicksBack = async () => {
         //Disconnect from room, and shut down room if not existent.
-        await socket.emit("disconnect_from_room", ({roomname_typed_by_user : roomname_typed_by_user, user: user}));
         setDisplayRoomClickedUserInput(false);
         setHideRoomsAndJoinChat(false);
         setRoomNameTypedByUser(null);
