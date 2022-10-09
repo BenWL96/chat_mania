@@ -18,18 +18,27 @@ function Body() {
     const [displayRoomClickedUserInput, setDisplayRoomClickedUserInput] = useState(false);
     const [hideRoomsAndJoinChat, setHideRoomsAndJoinChat] = useState(false);
 
+
+    const disconnectFromRoomEmit = async () => {
+
+      await socket.emit("disconnect_from_room", ({roomname_typed_by_user: roomname_typed_by_user, user: user}));
+
+    }
+
+    const userLeavesRoomUpdateState = () => {
+      console.log("user click leave");
+      setHideRoomsAndJoinChat(false);
+      setRoomJoined(false);
+      setRoomNameTypedByUser(null);
+      setDisplayRoomClickedUserInput(false);
+
+    }
     const leaveRoom = async () => {
 
     // User leaves the room, so disconnect and notify other users in room.
-
-    console.log("user click leave");
-    setHideRoomsAndJoinChat(false);
-    setRoomJoined(false);
-    setRoomNameTypedByUser(null);
-    setDisplayRoomClickedUserInput(false);
-
-    await socket.emit("disconnect_from_room", ({roomname_typed_by_user: roomname_typed_by_user, user: user}));
-
+    userLeavesRoomUpdateState();
+    disconnectFromRoomEmit();
+    
   };
 
   const secondUserJoinsRoomSetState = () => {
@@ -37,7 +46,7 @@ function Body() {
     const nthUserJoinsRoom = async () => {
       await socket.emit("join_room", roomname_typed_by_user);
     }
-    
+
     setDisplayRoomClickedUserInput(false);
     setRoomJoined(true);
     setGreetingMessage(null);
