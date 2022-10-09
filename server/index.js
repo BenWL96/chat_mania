@@ -137,30 +137,16 @@ io.on("connection", (socket) =>{
     });
 
     socket.on("disconnect_from_room", async ({roomname_typed_by_user, user}) =>{
-        //IF LAST USER IN ROOM LEAVES, THEN DELETE
 
-        console.log("user leave click received by server"); 
         socket.leave(roomname_typed_by_user);
-        console.log("Room shutting down?");
         
         console.log("user: " + user + " is being removed from server list");
 
         listUsers = listUsers.filter((item) => {
-            return item !== user
+            return item !== user;
         });
 
 
-
-
-        //Before we broadcast the room list, we need a way of
-        //determining if there is anyone in the room...
-        //We should not remove the room if a user still exists..
-        //remove room from list
-
-        //If no user in room then remove...
-        //We could create more complex machinery to relate room to user
-
-        //console.log("room: " + room + " is being removed from room list");
         const fetchUsersInRoom = async () => {
                 const roomUsers = await io.in(roomname_typed_by_user).allSockets();
                 //console.log("Room has users: " + roomUsers.size + " in it.");
@@ -188,7 +174,6 @@ io.on("connection", (socket) =>{
         
         } else {
 
-            //Do Something
             listRooms = listRooms.filter((item) => {
                 return item !== roomname_typed_by_user;
             });
@@ -197,13 +182,26 @@ io.on("connection", (socket) =>{
             messageList = messageList.filter((item) => {
                 return item.roomname_typed_by_user !== roomname_typed_by_user
             })
-           
-
             
             console.log("Room has nobody in it, so we must shut it down.")
             console.log(listRooms);
-            socket.emit("return_reduced_room_list", listRooms);
-            socket.broadcast.emit("return_reduced_room_list", listRooms);
+
+            
+            const emitReducedRoomList = async () => {
+
+                socket.emit("return_reduced_room_list", listRooms);
+
+            }
+
+
+            const broadcastReducedRoomList = async () => {
+
+                socket.broadcast.emit("return_reduced_room_list", listRooms);
+            
+            }
+
+            await emitReducedRoomList();
+            await broadcastReducedRoomList();
             
             
         }
