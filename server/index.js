@@ -62,7 +62,7 @@ io.on("connection", (socket) =>{
         socket.emit("return_room_list", listRooms);
     }) 
 -
-    socket.on("join_room", (roomname_typed_by_user) => {
+    socket.on("join_room", ({roomname_typed_by_user, user}) => {
         // User Joins
         // Other Users Notified
         // Previous Messages In Server Storage Sent To New User
@@ -119,12 +119,35 @@ io.on("connection", (socket) =>{
                 roomUsers.forEach(socket => {
                 console.log("user " + socket + " is in room" + roomname_typed_by_user);
             });
+                return roomUsers.size;
         
         }
 
-        fetchUsersInRoom();
-    
+
+    fetchUsersInRoom().then(user_count_in_room => {
+        console.log("THERE ARE " + user_count_in_room + "USERS IN THE ROOM");
+
+        if (user_count_in_room > 0){
+            
+            console.log("There are still " + user_count_in_room + " connections in the room.")
+
+            const user_left_room = "user " + user + " has joined the room";
+            const dict = {
+                author: "", 
+                message: user_left_room, 
+                time: new Date().toLocaleString()
+            };
+            socket.to(roomname_typed_by_user).emit("receive_message", dict);
+
+            
+        };
+
         socket.broadcast.emit("user joined", message);
+        
+    });
+
+
+    
         
     })
 
