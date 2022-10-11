@@ -64,7 +64,7 @@ function Body() {
     
     console.log("Room is unique.")
     joinRoomEmit();
-    
+
     setRoomJoined(true);
     setGreetingMessage(null);
     setErrorMessages([]);
@@ -74,13 +74,11 @@ function Body() {
   const ifRoomNameIsUniqueThenListRoom = (roomUnique) =>{
 
     if (roomUnique === true){
-
-        
+      
       roomNameUniqueSetState();
 
       // Here We Could Hook Up A Database To Check
       // Whether Previous Messages Exist In The Room
-    
 
     }else {
       if (displayRoomClickedUserInput == false){
@@ -167,6 +165,17 @@ function Body() {
     setDisplayRoomClickedUserInput(false);
   }
 
+  const receiveReturnReducedRoomListCheckLength = (listRooms) => {
+    if (listRooms.length > 0) {
+      console.log("Checking if room list needs to be updated.")
+      console.log(listRooms);
+      setListOfRoomsActive(listRooms);
+    }else{
+      setListOfRoomsActive([]);
+      setGreetingMessage("Please create a room!");
+    }
+  }
+
   useEffect(() => {
 
     //If user allocated a socket already, then prevent
@@ -211,10 +220,9 @@ function Body() {
       
       //This checks to make sure that the list of rooms are updating.
       socket.on("return_reduced_room_list", (listRooms) => {
-        console.log("Checking if room list needs to be updated.")
-        console.log(listRooms);
-        setListOfRoomsActive(listRooms);
-      });
+        receiveReturnReducedRoomListCheckLength(listRooms);
+    });
+    
 
     },[socket]); 
     
